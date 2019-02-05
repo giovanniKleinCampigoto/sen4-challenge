@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Header from '../../components/layout/header';
 import Footer from '../../components/layout/footer';
-import Main from '../../components/layout/main';
+import Main from '../../containers/main';
 
 export default class Home extends Component {
     state = {  }
