@@ -21,6 +21,20 @@ const SearchBarInput = styled(Input)`
     transition: width .5s ease-in-out;    
 `
 
+const InfiniteSpinner = styled(Icon)`
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    color: #ccc;
+    font-size: 1.1em;
+    animation: spin 2s linear infinite;
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% {  transform: rotate(359deg); }
+    }
+      
+`
+
 class SearchBar extends Component {
     state = { 
         shrink: true,
@@ -84,7 +98,7 @@ class SearchBar extends Component {
                     onKeyDown={e => this.debounce(e.target.value)}
                     onFocus={() => this.increaseSize()}
                     onBlur={() => this.decreaseSize()}/>
-                <SearchIcon icon="search"/>
+                {this.state.loading ? <InfiniteSpinner icon="spinner9"/> : <SearchIcon icon="search"/>}
             </SearchBarWrapper>
         );
     }

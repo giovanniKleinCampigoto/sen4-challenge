@@ -44,16 +44,9 @@ class Player extends Component {
         })
     }
 
-    componentWillUnmount() {
-        this.setState({
-            audio: "",
-            progress: 0,
-            status: "buffering"
-        })
-    }
-
     componentDidUpdate(prevProps, prevState) {
         if(prevProps.audio !== this.props.audio) {
+            console.log('update')
             this.setState({
                 audio: new Audio(this.props.audio),
                 progress: 0,
