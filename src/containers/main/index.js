@@ -37,7 +37,6 @@ class Main extends Component {
     state = INITIAL_STATE;
 
     getResults = value => {        
-        console.log(value)
         this.setState({
             values: {
                 returnedResult: value
