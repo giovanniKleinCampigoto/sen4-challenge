@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import Input from '../input';
 import Icon from '../../general/icon';
 
-import Helpers from '../../../utils/helpers'
-
 const SearchBarWrapper = styled.div`
     position: relative;
     width: ${props => props.width ? props.width : '125px' };
@@ -13,8 +11,8 @@ const SearchBarWrapper = styled.div`
 `
 const SearchIcon = styled(Icon)`
     position: absolute;
-    top: 17px;
-    right: 20px;
+    top: 10px;
+    right: 25px;
     color: #ccc;
     font-size: 1.1em;
 `

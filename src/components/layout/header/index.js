@@ -6,7 +6,7 @@ import logo from '../../../assets/logo/logo.svg'
 const StyledHeader = styled.section`
     width: 100vw;
     height: 70px;
-    background: red;
+    border-bottom: 1px solid #ccc;
 `
 
 const Clickable = styled.a`

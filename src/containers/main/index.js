@@ -9,14 +9,12 @@ import SearchService from '../../services/searchService';
 const ContainerMain = styled.section`
     min-height: 100vh;
     padding: 30px;
-    background green;
 `
 
 const Music = styled(Item)`
     display: flex;
     margin-top: 10px;
     padding: 15px;
-    cursor: pointer;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-family: Helvetica;
