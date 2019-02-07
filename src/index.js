@@ -1,17 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import * as serviceWorker from './serviceWorker';
+
+// App container
+import App from './containers/app';
+
+// Stylesheets
 import './index.css';
 import '../src/assets/icons/icomoon/style.css'
-import * as serviceWorker from './serviceWorker';
-import { BrowserRouter } from 'react-router-dom';
-import App from './containers/app'
 
+// Context API
+import ItemProvider from './components/context/ItemProvider';
+
+// Root element in HTML for rendering
 const rootElement = document.getElementById('root');
 
 const Router = (
-    <BrowserRouter>
-        <App />
-    </BrowserRouter>    
+    <ItemProvider>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>        
+    </ItemProvider>
 );
 
 ReactDOM.render(

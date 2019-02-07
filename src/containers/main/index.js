@@ -7,6 +7,8 @@ import Item from '../../components/dataDisplay/item'
 
 import SearchService from '../../services/searchService';
 
+import { ItemContext } from '../../components/context/ItemContext';
+
 const ContainerMain = styled.section`
     min-height: 100vh;
     padding: 30px;
@@ -24,36 +26,19 @@ const Music = styled(Item)`
 const SeekText = styled.p`
     color: #aaa;
 `
-
-const INITIAL_STATE = {
-    behaviors: {
-
-    },
-    values: {
-        returnedResult: {
-            results: []
-        }
-    }
-}
-
 class Main extends Component {
-    state = INITIAL_STATE;
 
-    getResults = value => {        
-        this.setState({
-            values: {
-                returnedResult: value
-            }
-        })
+    getResults = (value, pushResults) => {        
+        pushResults(value)
     }
 
     pushToArtistPage = (element) => {
         const { history: { push } } = this.props
 
-        push('/artist')
+        push('/artist');
     }
 
-    renderResults = () => this.state.values.returnedResult.results.map((element, index) => (
+    renderResults = (results) => results.map((element, index) => (
         <Music 
             onClick={() => this.pushToArtistPage(element)}
             name={element.trackName}
@@ -63,19 +48,25 @@ class Main extends Component {
             key={index} />
     )) 
 
-    resolveRendering () {
-        const { state: { values: { returnedResult : { results } } } } = this
-
-        return results.length ? this.renderResults() : <SeekText>Type in the input to find awesome stuff!</SeekText>
+    resolveRendering (returnedResults) {
+        return returnedResults.results.length ? this.renderResults(returnedResults.results) : <SeekText>Type in the input to find awesome stuff!</SeekText>
     }
 
     render() {
         return (
             <ContainerMain>
-                <SearchBar
-                    service={SearchService.searchByTerm}
-                    results={this.getResults}/>
-                {this.resolveRendering()}
+                <ItemContext.Consumer>
+                        {({ pushResults, pushCurrentArtist }) => (
+                            <SearchBar
+                                service={SearchService.searchByTerm}
+                                results={(value) => this.getResults(value, pushResults)}/>
+                        )}
+                </ItemContext.Consumer>
+                <ItemContext.Consumer>
+                        {({returnedResults}) => (
+                           this.resolveRendering(returnedResults)
+                        )}
+                </ItemContext.Consumer>
             </ContainerMain>
         );
     }

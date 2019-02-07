@@ -8,7 +8,8 @@ const ArtistContent = styled.section`
 
 class ArtistPage extends Component {
     state = {  }
-    render() {
+    render() { 
+
         return (
             <ArtistContent>
                 <h1>Artist Name!</h1>
