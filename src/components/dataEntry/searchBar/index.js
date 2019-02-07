@@ -67,7 +67,7 @@ class SearchBar extends Component {
         const { props: { service }, props, state: { previousSearch } } = this;
 
         if (value === previousSearch) return
-    
+
         try {
             this.setState({
                 loading: true
@@ -80,9 +80,10 @@ class SearchBar extends Component {
 
             for(let i = 0; i < responseArtists.data.results.length; i++) {
                 let artist = await service.getArtistById(responseArtists.data.results[i].artistId)
-                let artistAlbuns = artist.data.results.shift();
-                detailedArtists.push(artistAlbuns)
+                detailedArtists.push(artist.data)
             }
+
+            
 
             const filtered = detailedArtists.filter(x => x.resultCount > 1);
 
@@ -111,7 +112,7 @@ class SearchBar extends Component {
                 <SearchBarInput
                     width={shrink ? '90px' : '270px'}
                     placeholder="Search..."
-                    onKeyDown={e => this.debounce(e.target.value)}
+                    onKeyUp={e => this.debounce(e.target.value)}
                     onFocus={() => this.increaseSize()}
                     onBlur={() => this.decreaseSize()}/>
                 {this.state.loading ? <InfiniteSpinner icon="spinner9"/> : <SearchIcon icon="search"/>}

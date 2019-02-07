@@ -74,28 +74,30 @@ class Main extends Component {
         </React.Fragment>
     )
     
+    renderArtistAlbuns = (element, index, pushCurrentArtist) => element.results.map((artist, artIndex) => (
+        <Artist                         
+            onClick={() => this.pushToArtistPage(element, pushCurrentArtist)}
+            name={artist.collectionName}
+            genre={artist.primaryGenreName}
+            artist={artist.artistName}
+            img={artist.artworkUrl100}
+            key={`el-${index}-art-${artIndex}`} />
+    ))   
+
+    renderArtistResults = (results, pushCurrentArtist) => {
     
-
-    renderArtistResults = (results, pushCurrentArtist) => (
-        <React.Fragment>
-            {console.log(results)}
-            <ItemSeparator>Albums</ItemSeparator>
-            {
-                results.map((element, index) => (   
-                        element.results.map((artist, artIndex) => (
-                            <Artist                         
-                                onClick={() => this.pushToArtistPage(element, pushCurrentArtist)}
-                                name={artist.collectionName}
-                                genre={artist.primaryGenreName}
-                                artist={artist.artistName}
-                                img={artist.artworkUrl100}
-                                key={`el-${index}-art-${artIndex}`} />
-                        ))             
-                    )) 
-            }
-        </React.Fragment>
-
-    )
+        console.log(results)
+        return results.map((element, index) => {
+            const artist = element.results.shift();
+            return (
+                <React.Fragment key={index}>
+                    {console.log(element)}
+                    <ItemSeparator>{artist.artistName}</ItemSeparator>
+                    {this.renderArtistAlbuns(element, index, pushCurrentArtist)}
+                </React.Fragment>                            
+            )
+        }) 
+    }
 
     resolveMusicRendering (returnedMusicResults, pushCurrentArtist) {
         return returnedMusicResults.results.length ? this.renderMusicResults(returnedMusicResults.results, pushCurrentArtist) : null
