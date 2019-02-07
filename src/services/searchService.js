@@ -10,7 +10,7 @@ class SearchService {
     }
 
     static getArtistById(artistId) {
-        return Api.get(`lookup/?id=${artistId}&entity=album&limit=3`)
+        return Api.get(`lookup/?amgArtistId=${artistId}&entity=album&limit=3`)
     }
 }
 
