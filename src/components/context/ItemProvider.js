@@ -4,9 +4,12 @@ import { ItemContext } from './ItemContext'
 class ItemProvider extends Component {
     state = {
         currentArtist: {},
-        returnedResults: {
+        returnedMusicResults: {
             results: []
-        }
+        },
+        returnedArtistResults: {
+            results: []
+        },
     }
 
     pushCurrentArtist = value => {
@@ -15,10 +18,16 @@ class ItemProvider extends Component {
         })
     }
 
-    pushResults = (value) => {
+    pushArtistResults = (value) => {
+        this.setState({
+            returnedArtistResults: value
+        })
+    }
+
+    pushMusicResults = (value) => {
         
         this.setState({
-            returnedResults: value
+            returnedMusicResults: value
         })
     }
 
@@ -26,7 +35,8 @@ class ItemProvider extends Component {
         const value = {
             ...this.state, 
             pushCurrentArtist: this.pushCurrentArtist,
-            pushResults: this.pushResults            
+            pushArtistResults: this.pushArtistResults,
+            pushMusicResults: this.pushMusicResults            
         }
 
         return (

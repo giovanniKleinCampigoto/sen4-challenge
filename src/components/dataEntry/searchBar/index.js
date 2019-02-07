@@ -60,7 +60,7 @@ class SearchBar extends Component {
         clearTimeout(this.timer);
         this.timer = setTimeout(()=>{
             this.search(value.trim())
-        }, 500);
+        }, 1000);
     }
 
     search = async (value) => {  
@@ -73,12 +73,28 @@ class SearchBar extends Component {
                 loading: true
             })
 
-            const response = await service(value);
+            const responseMusic = await service.searchByTermMusics(value);
+            const responseArtists = await service.searchByTermArtists(value);
+
+            const detailedArtists = []
+
+            for(let i = 0; i < responseArtists.data.results.length; i++) {
+                let artist = await service.getArtistById(responseArtists.data.results[i].artistId)
+                let artistAlbuns = artist.data.results.shift();
+                detailedArtists.push(artistAlbuns)
+            }
+
+            const filtered = detailedArtists.filter(x => x.resultCount > 1);
+
+            const response = {
+                responseMusic: responseMusic.data,
+                responseArtists: filtered
+            }
 
             this.setState({
                 previousSearch: value,
                 loading: false
-            }, () => props.results(response.data));
+            }, () => props.results(response));
         } catch (e) {
             this.setState({
                 loading: false

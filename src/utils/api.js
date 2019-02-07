@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://itunes.apple.com/search';
+const BASE_URL = 'https://itunes.apple.com';
 
 class Api {
     static get (uri) {
-        return axios.get(`${BASE_URL}/?${uri}`);
+        return axios.get(`${BASE_URL}/${uri}`);
     }
 }
 

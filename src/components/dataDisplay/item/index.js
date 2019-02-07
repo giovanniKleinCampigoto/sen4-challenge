@@ -31,7 +31,7 @@ const PreviewText = styled.span`
     font-size: 0.7em;
 `
 
-const Item = ({ className, name, artist, img, audio, onClick }) => (
+const Item = ({ className, genre, name, artist, img, audio, onClick, hasPlayer }) => (
     <ItemWrapper className={className}>
         <DescriptionAndImg onClick={onClick}>
             <Image src={img} alt={artist}/>
@@ -40,10 +40,14 @@ const Item = ({ className, name, artist, img, audio, onClick }) => (
                 <p>{artist}</p>
             </Description>
         </DescriptionAndImg>
-        <div>
-            <PreviewText>Preview</PreviewText>
-            <Player audio={audio}/>
-        </div>
+        {genre ? <p>{genre}</p> : null}
+        {hasPlayer ?
+            (<div>
+                <PreviewText>Preview</PreviewText>
+                <Player audio={audio}/>
+            </div>)
+            : 
+            null}
     </ItemWrapper>
 )
 
