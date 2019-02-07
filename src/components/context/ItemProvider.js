@@ -3,18 +3,27 @@ import { ItemContext } from './ItemContext'
 
 class ItemProvider extends Component {
     state = {
-        currentArtist: {},
+        currentArtist: [],
         returnedMusicResults: {
             results: []
         },
         returnedArtistResults: {
             results: []
         },
+        relatedArtists: {
+            results: []
+        }
     }
 
     pushCurrentArtist = value => {
         this.setState({
             currentArtist: value
+        })
+    }
+
+    pushRelatedArtists = value => {
+        this.setState({
+            relatedArtists: value
         })
     }
 
@@ -36,7 +45,8 @@ class ItemProvider extends Component {
             ...this.state, 
             pushCurrentArtist: this.pushCurrentArtist,
             pushArtistResults: this.pushArtistResults,
-            pushMusicResults: this.pushMusicResults            
+            pushMusicResults: this.pushMusicResults,
+            pushRelatedArtists: this.pushRelatedArtists            
         }
 
         return (
