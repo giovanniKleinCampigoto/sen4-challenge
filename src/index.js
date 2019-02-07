@@ -18,9 +18,7 @@ const rootElement = document.getElementById('root');
 
 const Router = (
     <ItemProvider>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>        
+        <App />
     </ItemProvider>
 );
 

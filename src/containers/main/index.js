@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import SearchBar from '../../components/dataEntry/searchBar';
-import Item from '../../components/dataDisplay/item'
+import Item from '../../components/dataDisplay/item';
+import Grid from '../../components/layout/grid';
 
 import SearchService from '../../services/searchService';
 
 import { ItemContext } from '../../components/context/ItemContext';
 
-const ContainerMain = styled.section`
+const ContainerMain = styled.div`
     min-height: 100vh;
+    width:inherit;
     padding: 30px;
 `
 
@@ -43,6 +45,19 @@ class Main extends Component {
         pushArtistResults(value.responseArtists)
     }
 
+    pushToArtistPage = (element, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
+        const { history: { push } } = this.props
+
+        if  (element.wrapperType === "track") {
+            this.fetchArtistInfo(element.artistName, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums);
+        } else {
+            this.fetchRelatedArtists(element.results[0], pushRelatedArtists);
+            pushCurrentArtist(element.results[0]);
+            this.fetchAlbumsMusics(element, pushCurrentArtistAlbums);
+        }
+
+    }
+
     fetchArtistInfo = async (currentArtist, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
         try {
             const response = await SearchService.getArtistDetails(currentArtist);
@@ -51,6 +66,17 @@ class Main extends Component {
             pushRelatedArtists(response.data);
             this.fetchArtistDetails(current, pushCurrentArtist, pushCurrentArtistAlbums);
 
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    fetchRelatedArtists = async (currentArtist, pushRelatedArtists) => {
+        try {
+            const response = await SearchService.getArtistDetails(currentArtist);
+
+            response.data.results.shift();
+            pushRelatedArtists(response.data);
         } catch (e) {
             console.error(e);
         }
@@ -85,18 +111,6 @@ class Main extends Component {
         } catch (e) {
             console.error(e)
         }
-    }
-
-    pushToArtistPage = (element, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
-        const { history: { push } } = this.props
-
-        if  (element.wrapperType === "track") {
-            this.fetchArtistInfo(element.artistName, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums);
-        } else {
-            pushCurrentArtist(element.results[0]);
-            this.fetchAlbumsMusics(element, pushCurrentArtistAlbums);
-        }
-
     }
 
     renderMusicResults = (results, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => (
@@ -148,25 +162,27 @@ class Main extends Component {
 
     render() {
         return (
-            <ContainerMain>
-                <ItemContext.Consumer>
-                        {({ pushMusicResults, pushArtistResults}) => (
-                            <SearchBar
-                                service={SearchService}
-                                results={(value) => this.getResults(value, pushMusicResults, pushArtistResults)}/>
-                        )}
-                </ItemContext.Consumer>
-                <ItemContext.Consumer>
-                        {({returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
-                           this.resolveMusicRendering(returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
-                        )}
-                </ItemContext.Consumer>
-                <ItemContext.Consumer>
-                        {({returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
-                           this.resolveArtistRendering(returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
-                        )}
-                </ItemContext.Consumer>
-            </ContainerMain>
+            <Grid>
+                <ContainerMain>
+                    <ItemContext.Consumer>
+                            {({ pushMusicResults, pushArtistResults}) => (
+                                <SearchBar
+                                    service={SearchService}
+                                    results={(value) => this.getResults(value, pushMusicResults, pushArtistResults)}/>
+                            )}
+                    </ItemContext.Consumer>
+                    <ItemContext.Consumer>
+                            {({returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
+                            this.resolveMusicRendering(returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
+                            )}
+                    </ItemContext.Consumer>
+                    <ItemContext.Consumer>
+                            {({returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
+                            this.resolveArtistRendering(returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
+                            )}
+                    </ItemContext.Consumer>
+                </ContainerMain>
+            </Grid>
         );
     }
 }

@@ -4,12 +4,14 @@ import styled from 'styled-components';
 
 import { ItemContext } from '../../components/context/ItemContext';
 
-import Item from '../../components/dataDisplay/item'
+import Item from '../../components/dataDisplay/item';
+import Grid from '../../components/layout/grid';
 
 import SearchService from '../../services/searchService';
 
 const ArtistContent = styled.section`
     min-height: 100vh;
+    width: inherit;
 `
 
 const ArtistDescriptionWrapper = styled.div`
@@ -141,33 +143,35 @@ class ArtistPage extends Component {
     render() { 
 
         return (
-            <ArtistContent>
-                
-                <ItemContext.Consumer>
-                        {({currentArtist}) => (
-                            <ArtistDescriptionWrapper>
-                                <React.Fragment>
-                                    <ArtistCover src={currentArtist.artworkUrl100}/>
-                                    <ArtistDescription>
-                                        <ArtistName>{currentArtist.artistName}</ArtistName>                                    
-                                        <ArtistGenre>{currentArtist.primaryGenreName}</ArtistGenre>
-                                        <Country>{currentArtist.country}</Country>                                        
-                                    </ArtistDescription>
-                                </React.Fragment>
-                           </ArtistDescriptionWrapper>
-                        )}
-                </ItemContext.Consumer>
-                <ItemContext.Consumer>
-                        {({currentArtistAlbums}) => (
-                           this.renderArtistAlbums(currentArtistAlbums)
-                        )}
-                </ItemContext.Consumer>
-                <ItemContext.Consumer>
-                        {({relatedArtists}) => (
-                           this.renderRelatedArtists(relatedArtists)
-                        )}
-                </ItemContext.Consumer>               
-            </ArtistContent>
+            <Grid>
+                <ArtistContent>
+                    
+                    <ItemContext.Consumer>
+                            {({currentArtist}) => (
+                                <ArtistDescriptionWrapper>
+                                    <React.Fragment>
+                                        <ArtistCover src={currentArtist.artworkUrl100}/>
+                                        <ArtistDescription>
+                                            <ArtistName>{currentArtist.artistName}</ArtistName>                                    
+                                            <ArtistGenre>{currentArtist.primaryGenreName}</ArtistGenre>
+                                            <Country>{currentArtist.country}</Country>                                        
+                                        </ArtistDescription>
+                                    </React.Fragment>
+                            </ArtistDescriptionWrapper>
+                            )}
+                    </ItemContext.Consumer>
+                    <ItemContext.Consumer>
+                            {({currentArtistAlbums}) => (
+                            this.renderArtistAlbums(currentArtistAlbums)
+                            )}
+                    </ItemContext.Consumer>
+                    <ItemContext.Consumer>
+                            {({relatedArtists}) => (
+                            this.renderRelatedArtists(relatedArtists)
+                            )}
+                    </ItemContext.Consumer>               
+                </ArtistContent>
+            </Grid>
         );
     }
 }
