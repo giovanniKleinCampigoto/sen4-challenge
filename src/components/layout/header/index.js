@@ -22,6 +22,11 @@ const Logo = styled.img`
     width: 50px;
     height: 50px;
     color: #000;
+    animation: spin 10s linear infinite;
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% {  transform: rotate(359deg); }
+    }
 `
 const Title = styled.h1`
     margin: 0;

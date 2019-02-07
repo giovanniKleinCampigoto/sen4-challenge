@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 
 import Header from '../../components/layout/header';
 import Footer from '../../components/layout/footer';
-import Main from '../../containers/main';
-
-export default class Home extends Component {
+import Routes from '../../routes';
+export default class App extends Component {
     state = {  }
     render() {
         return (
             <React.Fragment>
                 <Header/>
-                <Main/>
+                    <Routes/>
                 <Footer/>
             </React.Fragment>
         );

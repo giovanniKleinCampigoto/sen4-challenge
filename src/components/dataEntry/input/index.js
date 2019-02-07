@@ -5,8 +5,10 @@ const Input = styled.input`
     padding: 5px;
     font-size: 1em;
     font-family: "Helvetica", "Arial";
-    border-radius: 5px;
-    border-color: #ccc;
+    border-color: transparent;
+    border-bottom-color: #ccc;
+
+    
 `
 
 export default Input;

@@ -4,13 +4,13 @@ import './index.css';
 import '../src/assets/icons/icomoon/style.css'
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
-import Routes from './routes'
+import App from './containers/app'
 
 const rootElement = document.getElementById('root');
 
 const Router = (
     <BrowserRouter>
-        <Routes />
+        <App />
     </BrowserRouter>    
 );
 

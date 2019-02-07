@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 import SearchBar from '../../components/dataEntry/searchBar';
 import Item from '../../components/dataDisplay/item'
@@ -18,6 +19,10 @@ const Music = styled(Item)`
     border: 1px solid #ccc;
     border-radius: 5px;
     font-family: Helvetica;
+`
+
+const SeekText = styled.p`
+    color: #aaa;
 `
 
 const INITIAL_STATE = {
@@ -42,8 +47,15 @@ class Main extends Component {
         })
     }
 
+    pushToArtistPage = (element) => {
+        const { history: { push } } = this.props
+
+        push('/artist')
+    }
+
     renderResults = () => this.state.values.returnedResult.results.map((element, index) => (
         <Music 
+            onClick={() => this.pushToArtistPage(element)}
             name={element.trackName}
             artist={element.artistName}
             audio={element.previewUrl}
@@ -54,7 +66,7 @@ class Main extends Component {
     resolveRendering () {
         const { state: { values: { returnedResult : { results } } } } = this
 
-        return results.length ? this.renderResults() : null
+        return results.length ? this.renderResults() : <SeekText>Type in the input to find awesome stuff!</SeekText>
     }
 
     render() {
@@ -69,4 +81,4 @@ class Main extends Component {
     }
 }
 
-export default Main;
+export default withRouter(Main);
