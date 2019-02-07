@@ -76,10 +76,13 @@ class SearchBar extends Component {
             const responseMusic = await service.searchByTermMusics(value);
             const responseArtists = await service.searchByTermArtists(value);
 
+            console.log(responseArtists.data)
+
             const detailedArtists = []
 
             for (let i = 0; i < responseArtists.data.results.length; i++) {
                 let artist = await service.getArtistById(responseArtists.data.results[i].amgArtistId)
+                console.log(artist.data)
                 artist.data.results.shift();
                 detailedArtists.push(artist.data)
             }

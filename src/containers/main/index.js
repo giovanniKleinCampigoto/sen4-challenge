@@ -43,67 +43,83 @@ class Main extends Component {
         pushArtistResults(value.responseArtists)
     }
 
-    fetchArtistInfo = async (currentArtist, pushCurrentArtist, pushRelatedArtists) => {
+    fetchArtistInfo = async (currentArtist, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
         try {
             const response = await SearchService.getArtistDetails(currentArtist);
 
             const current  = response.data.results.shift();
             pushRelatedArtists(response.data);
-            this.fetchArtistDetails(current, pushCurrentArtist);
+            this.fetchArtistDetails(current, pushCurrentArtist, pushCurrentArtistAlbums);
 
         } catch (e) {
             console.error(e);
         }
     }
 
-    fetchArtistDetails = async (current, pushCurrentArtist) => {
-        const { history: { push } } = this.props
+    fetchArtistDetails = async (current, pushCurrentArtist, pushCurrentArtistAlbums) => {
 
         try {
             const response = await  SearchService.getArtistById(current.amgArtistId);
             pushCurrentArtist(response.data.results[1]);
-            push('/artist');
-
+            
+            this.fetchAlbumsMusics(response.data, pushCurrentArtistAlbums);
         } catch(e) {    
             console.error(e)
         }
     }
 
-    pushToArtistPage = (element, pushCurrentArtist, pushRelatedArtists) => {
+    fetchAlbumsMusics = async (albums, pushCurrentArtistAlbums) => {
+        const { history: { push } } = this.props
+        
+        const albumsArray = albums.results
+        
+        const resultsArray = []
+        try {
+            for(let i = 1; i < albumsArray.length; i++) {
+                const response = await SearchService.getAlbumMusics(albumsArray[i].collectionName);
+                resultsArray.push({ album: albumsArray[i], musics: response.data.results})
+            }
+
+            pushCurrentArtistAlbums(resultsArray);
+            push('/artist');
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    pushToArtistPage = (element, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
         const { history: { push } } = this.props
 
         if  (element.wrapperType === "track") {
-            this.fetchArtistInfo(element.artistName, pushCurrentArtist, pushRelatedArtists);
+            this.fetchArtistInfo(element.artistName, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums);
         } else {
             pushCurrentArtist(element.results[0]);
-            pushRelatedArtists(element);    
-            push('/artist');
+            this.fetchAlbumsMusics(element, pushCurrentArtistAlbums);
         }
 
     }
 
-    renderMusicResults = (results, pushCurrentArtist, pushRelatedArtists) => (
+    renderMusicResults = (results, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => (
         <React.Fragment>
             <ItemSeparator>Musics</ItemSeparator>
             {
                 results.map((element, index) => (                
                     <Music 
                         hasPlayer
-                        onClick={() => this.pushToArtistPage(element, pushCurrentArtist, pushRelatedArtists)}
+                        onClick={() => this.pushToArtistPage(element, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)}
                         name={element.trackName}
                         artist={element.artistName}
                         audio={element.previewUrl}
                         img={element.artworkUrl100}
                         key={index} />
-
                     )) 
             }
         </React.Fragment>
     )
     
-    renderArtistAlbuns = (element, index, pushCurrentArtist, pushRelatedArtists) => element.results.map((artist, artIndex) => (
+    renderArtistAlbuns = (element, index, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => element.results.map((artist, artIndex) => (
         <Artist                         
-            onClick={() => this.pushToArtistPage(element, pushCurrentArtist, pushRelatedArtists)}
+            onClick={() => this.pushToArtistPage(element, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)}
             name={artist.collectionName}
             genre={artist.primaryGenreName}
             artist={artist.artistName}
@@ -111,23 +127,23 @@ class Main extends Component {
             key={`el-${index}-art-${artIndex}`} />
     ))   
 
-    renderArtistResults = (results, pushCurrentArtist, pushRelatedArtists) => {    
+    renderArtistResults = (results, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {    
         return results.map((element, index) => {
             return (
                 <React.Fragment key={index}>
                     <ItemSeparator>{element.results[0].artistName}</ItemSeparator>
-                    {this.renderArtistAlbuns(element, index, pushCurrentArtist, pushRelatedArtists)}
+                    {this.renderArtistAlbuns(element, index, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)}
                 </React.Fragment>                            
             )
         }) 
     }
 
-    resolveMusicRendering (returnedMusicResults, pushCurrentArtist, pushRelatedArtists) {
-        return returnedMusicResults.results.length ? this.renderMusicResults(returnedMusicResults.results, pushCurrentArtist, pushRelatedArtists) : null
+    resolveMusicRendering (returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) {
+        return returnedMusicResults.results.length ? this.renderMusicResults(returnedMusicResults.results, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) : null
     }
 
-    resolveArtistRendering (returnedArtistResults, pushCurrentArtist, pushRelatedArtists) {
-        return returnedArtistResults.length ? this.renderArtistResults(returnedArtistResults, pushCurrentArtist, pushRelatedArtists) : null
+    resolveArtistRendering (returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) {
+        return returnedArtistResults.length ? this.renderArtistResults(returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) : null
     }
 
     render() {
@@ -141,13 +157,13 @@ class Main extends Component {
                         )}
                 </ItemContext.Consumer>
                 <ItemContext.Consumer>
-                        {({returnedMusicResults, pushCurrentArtist, pushRelatedArtists}) => (
-                           this.resolveMusicRendering(returnedMusicResults, pushCurrentArtist, pushRelatedArtists)
+                        {({returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
+                           this.resolveMusicRendering(returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
                         )}
                 </ItemContext.Consumer>
                 <ItemContext.Consumer>
-                        {({returnedArtistResults, pushCurrentArtist, pushRelatedArtists}) => (
-                           this.resolveArtistRendering(returnedArtistResults, pushCurrentArtist, pushRelatedArtists)
+                        {({returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
+                           this.resolveArtistRendering(returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
                         )}
                 </ItemContext.Consumer>
             </ContainerMain>

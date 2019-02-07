@@ -6,7 +6,7 @@ class SearchService {
     }
 
     static searchByTermArtists(term) {
-        return Api.get(`search/?term=${encodeURIComponent(term)}&limit=2&entity=allArtist&attribute=allArtistTerm`);
+        return Api.get(`search/?term=${encodeURIComponent(term)}&limit=2&entity=musicArtist&attribute=artistTerm`);
     }
 
     static getArtistById(artistId) {
@@ -17,8 +17,12 @@ class SearchService {
         return Api.get(`search/?term=${encodeURIComponent(term)}&limit=5&entity=allArtist&attribute=allArtistTerm`);
     }
 
-    static getArtist(term) {        
-        return Api.get(`search/?term=${encodeURIComponent(term)}&limit=5&entity=musicArtist&attribute=artistTerm`);
+    static getRelatedArtists(term) {        
+        return Api.get(`search/?term=${encodeURIComponent(term)}&limit=5&entity=album`);
+    }
+
+    static getAlbumMusics(term) {
+        return Api.get(`search/?term=${encodeURIComponent(term)}&limit=5&media=music`);
     }
 }
 

@@ -34,7 +34,7 @@ const PreviewText = styled.span`
 const Item = ({ className, genre, name, artist, img, audio, onClick, hasPlayer }) => (
     <ItemWrapper className={className}>
         <DescriptionAndImg onClick={onClick}>
-            <Image src={img} alt={artist}/>
+            {img ? <Image src={img} alt={artist}/> : null}
             <Description>
                 <p>{name}</p>
                 <p>{artist}</p>

@@ -9,25 +9,40 @@ import Item from '../../components/dataDisplay/item'
 import SearchService from '../../services/searchService';
 
 const ArtistContent = styled.section`
-    display: flex;
     min-height: 100vh;
 `
 
 const ArtistDescriptionWrapper = styled.div`
     display: flex;
+    padding: 15px;
     width: 100%;
-    height: 200px;
+    justify-content: center;
+    background: transparent;
+`
+
+const ArtistDescription = styled.div`
+    padding: 0 15px;
 `
 
 const ArtistName = styled.h1`
-    
+    font-size: 1em;
+    color: rgb(60,60,60);
+`   
+
+const ArtistGenre = styled.p`
+    font-size: 0.7em;
+    color: rgb(60,60,60);
 `
 
 const ArtistCover = styled.img`
-    border-radius: 50%;
+    height: 100px;
+    width: 100px;
+    border-color: none;
+    border-radius: 100%;
 `
 
-const MusicBox = styled.div`
+const RelatedArtistsContainer = styled.div`
+    margin: 15px;
 `
 
 const Artist = styled(Item)`
@@ -39,39 +54,89 @@ const Artist = styled(Item)`
     font-family: Helvetica;
 `
 
+const Music = styled(Item)`
+    display: flex;
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Helvetica;
+`
+
 const ItemSeparator = styled.p`
-    font-size: 2em;
+    font-size: 1em;
     border-bottom: 1px solid #aaa;
 `
 
-class ArtistPage extends Component {
-    
+const Country = styled.span`
+    font-size: 0.7em;
+    color: rgb(60,60,60);
+`
+const Description = styled.label`
+    font-size: 0.6em;
+    color: #ccc;
+`
 
-    renderArtistAlbuns = (element, index) => element.results.map((artist, artIndex) => (
-        <Artist                         
-            onClick={() => this.pushToArtistPage(element)}
-            name={artist.collectionName}
-            genre={artist.primaryGenreName}
-            artist={artist.artistName}
-            img={artist.artworkUrl100}
-            key={`el-${index}-art-${artIndex}`} />
+const Albums = styled(Item)`
+    display: flex;
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Helvetica;
+`
+
+const AlbumsWrapper = styled.div`
+    padding: 0 15px;
+`
+
+class ArtistPage extends Component {
+    renderArtistResults = (results) => {  
+        
+        return (
+            <RelatedArtistsContainer>
+                <ItemSeparator>Related</ItemSeparator>
+                {
+                    results.map((element, index) => (
+                        <Artist                         
+                            name={element.collectionName}
+                            genre={element.primaryGenreName}
+                            artist={element.artistName}
+                            key={index} />                    
+                    )) 
+                }
+            </RelatedArtistsContainer>
+        )        
+    }
+
+    renderAlbumMusics = (element, index) => element.map((music, index) => (
+        <Music 
+            hasPlayer
+            name={music.trackName}
+            artist={music.artistName}
+            audio={music.previewUrl}
+            img={music.artworkUrl100}
+            key={`music-${index}`} />
     ))   
 
-    renderArtistResults = (results) => {    
+    renderArtistAlbunsResults = (results, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {    
         return results.map((element, index) => {
             return (
-                <React.Fragment key={index}>
-                    <ItemSeparator>Related</ItemSeparator>
-                    {this.renderArtistAlbuns(element, index)}
-                </React.Fragment>                            
+                <AlbumsWrapper key={index}>
+                    <ItemSeparator>{element.album.collectionName}</ItemSeparator>
+                    {this.renderAlbumMusics(element.musics, index)}
+                </AlbumsWrapper>                            
             )
         }) 
     }
 
     renderRelatedArtists (relatedArtists) {
-        console.log(relatedArtists)
-        return relatedArtists.length ? this.renderArtistResults(relatedArtists) : null
-    }
+        return relatedArtists.results.length ? this.renderArtistResults(relatedArtists.results) : null
+    } 
+    
+    renderArtistAlbums (artistsAlbums) {
+        return artistsAlbums.length ? this.renderArtistAlbunsResults(artistsAlbums) : null
+    }   
 
     render() { 
 
@@ -83,16 +148,25 @@ class ArtistPage extends Component {
                             <ArtistDescriptionWrapper>
                                 <React.Fragment>
                                     <ArtistCover src={currentArtist.artworkUrl100}/>
-                                    <ArtistName>{currentArtist.artistName}</ArtistName>
+                                    <ArtistDescription>
+                                        <ArtistName>{currentArtist.artistName}</ArtistName>                                    
+                                        <ArtistGenre>{currentArtist.primaryGenreName}</ArtistGenre>
+                                        <Country>{currentArtist.country}</Country>                                        
+                                    </ArtistDescription>
                                 </React.Fragment>
                            </ArtistDescriptionWrapper>
+                        )}
+                </ItemContext.Consumer>
+                <ItemContext.Consumer>
+                        {({currentArtistAlbums}) => (
+                           this.renderArtistAlbums(currentArtistAlbums)
                         )}
                 </ItemContext.Consumer>
                 <ItemContext.Consumer>
                         {({relatedArtists}) => (
                            this.renderRelatedArtists(relatedArtists)
                         )}
-                </ItemContext.Consumer>
+                </ItemContext.Consumer>               
             </ArtistContent>
         );
     }

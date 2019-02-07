@@ -4,6 +4,7 @@ import { ItemContext } from './ItemContext'
 class ItemProvider extends Component {
     state = {
         currentArtist: [],
+        currentArtistAlbums: [],
         returnedMusicResults: {
             results: []
         },
@@ -15,9 +16,16 @@ class ItemProvider extends Component {
         }
     }
 
+    // Artist Page Related
     pushCurrentArtist = value => {
         this.setState({
             currentArtist: value
+        })
+    }
+
+    pushCurrentArtistAlbums = value => {
+        this.setState({
+            currentArtistAlbums: value
         })
     }
 
@@ -27,6 +35,7 @@ class ItemProvider extends Component {
         })
     }
 
+    // Maing Page Related
     pushArtistResults = (value) => {
         this.setState({
             returnedArtistResults: value
@@ -46,7 +55,8 @@ class ItemProvider extends Component {
             pushCurrentArtist: this.pushCurrentArtist,
             pushArtistResults: this.pushArtistResults,
             pushMusicResults: this.pushMusicResults,
-            pushRelatedArtists: this.pushRelatedArtists            
+            pushRelatedArtists: this.pushRelatedArtists,
+            pushCurrentArtistAlbums: this. pushCurrentArtistAlbums            
         }
 
         return (
