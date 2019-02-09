@@ -46,8 +46,6 @@ class Main extends Component {
     }
 
     pushToArtistPage = (element, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
-        const { history: { push } } = this.props
-
         if  (element.wrapperType === "track") {
             this.fetchArtistInfo(element.artistName, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums);
         } else {

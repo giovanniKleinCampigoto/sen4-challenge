@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
-
+import styled from 'styled-components';
 import Header from '../../components/layout/header';
 import Footer from '../../components/layout/footer';
 import Routes from '../../routes';
-export default class App extends Component {
+
+
+const AppWrapper = styled.section`
+`
+class App extends Component {
     state = {  }
     render() {
         return (
-            <React.Fragment>
+            <AppWrapper>
                 <Header/>                    
-                    <Routes/>                    
+                <Routes/>                    
                 <Footer/>
-            </React.Fragment>
+            </AppWrapper>
         );
     }
 }
+
+export default App;
