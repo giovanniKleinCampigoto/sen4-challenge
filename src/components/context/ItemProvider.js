@@ -43,7 +43,6 @@ class ItemProvider extends Component {
     }
 
     pushMusicResults = (value) => {
-        
         this.setState({
             returnedMusicResults: value
         })

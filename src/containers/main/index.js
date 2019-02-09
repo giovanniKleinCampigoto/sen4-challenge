@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import SearchBar from '../../components/dataEntry/searchBar';
 import Item from '../../components/dataDisplay/item';
 import Grid from '../../components/layout/grid';
+import Icon from '../../components/general/icon';
 
 import SearchService from '../../services/searchService';
 
@@ -38,11 +39,34 @@ const Artist = styled(Item)`
     border-radius: 5px;
     font-family: Helvetica;
 `
+
+const InfiniteSpinner = styled(Icon)`
+    color: #ccc;
+    font-size: 2em;
+    animation: spin 2s linear infinite;
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% {  transform: rotate(359deg); }
+    }     
+`
+const SpinnerContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+`
+
 class Main extends Component {
+    state = {
+        loadingRequests: false,
+        failedFetching: false
+    }
 
     getResults = (value, pushMusicResults, pushArtistResults) => {  
         pushMusicResults(value.responseMusic)
         pushArtistResults(value.responseArtists)
+        this.setState({
+            failedFetching: false
+        })
     }
 
     pushToArtistPage = (element, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
@@ -58,9 +82,13 @@ class Main extends Component {
 
     fetchArtistInfo = async (currentArtist, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) => {
         try {
+            this.setState({
+                loadingRequests:  true,
+            })
+
             const response = await SearchService.getArtistDetails(currentArtist);
 
-            const current  = response.data.results.shift();
+            const current  = response.data.results.filter(x => x.artistName === currentArtist)[0];
             pushRelatedArtists(response.data);
             this.fetchArtistDetails(current, pushCurrentArtist, pushCurrentArtistAlbums);
 
@@ -84,10 +112,15 @@ class Main extends Component {
 
         try {
             const response = await  SearchService.getArtistById(current.amgArtistId);
+            if(!response.data.results.length) throw new Error('No results were found...')
             pushCurrentArtist(response.data.results[1]);
             
             this.fetchAlbumsMusics(response.data, pushCurrentArtistAlbums);
         } catch(e) {    
+            this.setState({
+                loadingRequests: false,
+                failedFetching: true
+            })
             console.error(e)
         }
     }
@@ -158,6 +191,45 @@ class Main extends Component {
         return returnedArtistResults.length ? this.renderArtistResults(returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums) : null
     }
 
+    isLoading () {
+        
+        if (this.state.loadingRequests) {
+            return (
+                <SpinnerContainer>
+                    <InfiniteSpinner icon="spinner9"/>
+                </SpinnerContainer>  
+            )
+        } else  {
+            return this.isFailed();
+        }
+    }
+
+    isFailed () {
+        if (this.state.failedFetching) {
+            return (
+                <div>
+                    <h1>Failed fetching results :/, please do another search</h1>
+                </div>
+            )
+        } else {
+            return (
+                <React.Fragment>
+                    <ItemContext.Consumer>
+                        {({returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
+                            this.resolveMusicRendering(returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
+                        )}
+                    </ItemContext.Consumer>
+                    <ItemContext.Consumer>
+                            {({returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
+                                this.resolveArtistRendering(returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
+                            )}
+                    </ItemContext.Consumer>
+                </React.Fragment>
+    
+            )
+        }
+    }
+
     render() {
         return (
             <Grid>
@@ -169,16 +241,10 @@ class Main extends Component {
                                     results={(value) => this.getResults(value, pushMusicResults, pushArtistResults)}/>
                             )}
                     </ItemContext.Consumer>
-                    <ItemContext.Consumer>
-                            {({returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
-                            this.resolveMusicRendering(returnedMusicResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
-                            )}
-                    </ItemContext.Consumer>
-                    <ItemContext.Consumer>
-                            {({returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums}) => (
-                            this.resolveArtistRendering(returnedArtistResults, pushCurrentArtist, pushRelatedArtists, pushCurrentArtistAlbums)
-                            )}
-                    </ItemContext.Consumer>
+                    {
+                        this.isLoading()
+                    }
+                    
                 </ContainerMain>
             </Grid>
         );
