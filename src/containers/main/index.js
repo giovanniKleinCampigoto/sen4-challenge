@@ -55,6 +55,16 @@ const SpinnerContainer = styled.div`
     margin-top: 50px;
 `
 
+const ErrorMessage = styled.p`
+    color: #aaa;
+    font-size: 1.5em;
+`
+
+const ErrorWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+` 
+
 class Main extends Component {
     state = {
         loadingRequests: false,
@@ -207,9 +217,9 @@ class Main extends Component {
     isFailed () {
         if (this.state.failedFetching) {
             return (
-                <div>
-                    <h1>Failed fetching results :/, please do another search</h1>
-                </div>
+                <ErrorWrapper>
+                    <ErrorMessage>Failed fetching results :/, please do another search</ErrorMessage>
+                </ErrorWrapper>
             )
         } else {
             return (
